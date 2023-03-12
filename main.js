@@ -1,17 +1,12 @@
-const atomicInteger = createAtomicInteger(0);
+const atomicInteger = createAtomicInteger();
+let count=2;
 let sumDisassembled = 0;
 let sumNotDisassembled = 0;
 
-function createAtomicInteger(initialValue) {
-    let value = initialValue || 0;
+function createAtomicInteger(initialValue = 0) {
     return {
-        get() {
-            return value;
-        },
-
-        increment() {
-            return ++value;
-        },
+        get: () => initialValue,
+        increment: () => ++initialValue,
     };
 }
 
@@ -71,42 +66,15 @@ function exampleJavaScriptQuestion() {
         "Coding questions:  What will be returned by each of these?\n    console.log(\"hello\" || \"world\")\n    console.log(\"foo\" && \"bar\")",
         "Coding questions:  Write an immediately invoked function expression (IIFE)"];
     console.log(list.length);
-    let disassembled = document.getElementById("disassembled").checked;
-    let noDisassembled = document.getElementById("noDisassembled").checked;
-    let resultDisassembled = sumDisassembled / list.length;
-    let resultNotDisassembled = sumNotDisassembled / list.length;
+    const disassembled = document.getElementById("disassembled").checked;
+    const noDisassembled = document.getElementById("noDisassembled").checked;
+    const resultDisassembled = sumDisassembled / list.length;
+    const resultNotDisassembled = sumNotDisassembled / list.length;
     event.preventDefault();
     console.log(sumDisassembled);
     console.log(sumNotDisassembled);
-    if (atomicInteger.get() === 0) {
-        document.getElementById("firstQuestion").innerHTML = "";
-    }
-    switch (true) {
-        case (disassembled && noDisassembled && atomicInteger.get() < list.length - 1):
-            document.querySelector('.card-header-title').innerHTML = `YOU HAVE TO CHOOSE ONE STATUS GAME OVER!\n
-            Percentage of understanding questions:  ${resultDisassembled.toFixed(3)} Percentage of not understanding questions: ${resultNotDisassembled.toFixed(3)}`;
-            updateCheckAfterHalfSeconds();
-            reloadAfter4Seconds();
-            break;
-        case (disassembled && !noDisassembled && atomicInteger.get() < list.length - 1):
-            document.querySelector('.card-header-title').innerHTML = `${list[atomicInteger.increment()]}`;
-            document.getElementById('questionNumber').innerHTML = `Question ${atomicInteger.get()}`;
-            sumDisassembled++;
-            updateCheckAfterHalfSeconds();
-            break;
-        case (!disassembled && noDisassembled && atomicInteger.get() < list.length - 1):
-            document.querySelector('.card-header-title').innerHTML = `Okay, here's another question ${list[atomicInteger.increment()]}`;
-            document.getElementById('questionNumber').innerHTML = `Question ${atomicInteger.get()}`;
-            sumNotDisassembled++;
-            updateCheckAfterHalfSeconds();
-            break;
-        case (atomicInteger.get() >= list.length - 1):
-            document.querySelector('.card-header-title').innerHTML = `GAME OVER\n
-            Percentage of understanding questions:  ${resultDisassembled.toFixed(3)} Percentage of not understanding questions: ${resultNotDisassembled.toFixed(3)}`;
-            updateCheckAfterHalfSeconds();
-            reloadAfter4Seconds();
-            break;
-    }
+    getCheck({disassembled, noDisassembled,
+        resultDisassembled, resultNotDisassembled, list, atomicInteger});
 }
 
 function reloadAfter4Seconds() {
@@ -124,4 +92,33 @@ function updateCheckAfterHalfSeconds() {
             document.getElementById("noDisassembled").checked = false;
         }, 500);
     });
+}
+
+function getCheck({disassembled, noDisassembled, resultDisassembled, resultNotDisassembled, list, atomicInteger}) {
+    switch (true) {
+        case (disassembled && noDisassembled && atomicInteger.get() < list.length - 1):
+            document.querySelector('.card-header-title').innerHTML = `YOU HAVE TO CHOOSE ONE STATUS GAME OVER!\n
+            Percentage of understanding questions:  ${resultDisassembled.toFixed(3)} Percentage of not understanding questions: ${resultNotDisassembled.toFixed(3)}`;
+            updateCheckAfterHalfSeconds();
+            reloadAfter4Seconds();
+            break;
+        case (disassembled && !noDisassembled && atomicInteger.get() < list.length - 1):
+            document.querySelector('.card-header-title').innerHTML = `${list[atomicInteger.increment()]}`;
+            document.getElementById('questionNumber').innerHTML = `Question ${count++}`;
+            sumDisassembled++;
+            updateCheckAfterHalfSeconds();
+            break;
+        case (!disassembled && noDisassembled && atomicInteger.get() < list.length - 1):
+            document.querySelector('.card-header-title').innerHTML = `Okay, here's another question ${list[atomicInteger.increment()]}`;
+            document.getElementById('questionNumber').innerHTML = `Question ${count++}`;
+            sumNotDisassembled++;
+            updateCheckAfterHalfSeconds();
+            break;
+        case (atomicInteger.get() >= list.length - 1):
+            document.querySelector('.card-header-title').innerHTML = `GAME OVER\n
+            Percentage of understanding questions:  ${resultDisassembled.toFixed(3)} Percentage of not understanding questions: ${resultNotDisassembled.toFixed(3)}`;
+            updateCheckAfterHalfSeconds();
+            reloadAfter4Seconds();
+            break;
+    }
 }
