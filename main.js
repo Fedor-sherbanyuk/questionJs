@@ -5,7 +5,9 @@ let sumNotDisassembled = 0;
 
 function createAtomicInteger(initialValue = 0) {
     return {
-        get: () => initialValue,
+        get get (){
+            return initialValue;
+        },
         increment: () => ++initialValue,
     };
 }
@@ -96,25 +98,25 @@ function updateCheckAfterHalfSeconds() {
 
 function getCheck({disassembled, noDisassembled, resultDisassembled, resultNotDisassembled, list, atomicInteger}) {
     switch (true) {
-        case (disassembled && noDisassembled && atomicInteger.get() < list.length - 1):
+        case (disassembled && noDisassembled && atomicInteger.get < list.length - 1):
             document.querySelector('.card-header-title').innerHTML = `YOU HAVE TO CHOOSE ONE STATUS GAME OVER!\n
             Percentage of understanding questions:  ${resultDisassembled.toFixed(3)} Percentage of not understanding questions: ${resultNotDisassembled.toFixed(3)}`;
             updateCheckAfterHalfSeconds();
             reloadAfter4Seconds();
             break;
-        case (disassembled && !noDisassembled && atomicInteger.get() < list.length - 1):
+        case (disassembled && !noDisassembled && atomicInteger.get < list.length - 1):
             document.querySelector('.card-header-title').innerHTML = `${list[atomicInteger.increment()]}`;
             document.getElementById('questionNumber').innerHTML = `Question ${count++}`;
             sumDisassembled++;
             updateCheckAfterHalfSeconds();
             break;
-        case (!disassembled && noDisassembled && atomicInteger.get() < list.length - 1):
+        case (!disassembled && noDisassembled && atomicInteger.get < list.length - 1):
             document.querySelector('.card-header-title').innerHTML = `Okay, here's another question ${list[atomicInteger.increment()]}`;
             document.getElementById('questionNumber').innerHTML = `Question ${count++}`;
             sumNotDisassembled++;
             updateCheckAfterHalfSeconds();
             break;
-        case (atomicInteger.get() >= list.length - 1):
+        case (atomicInteger.get >= list.length - 1):
             document.querySelector('.card-header-title').innerHTML = `GAME OVER\n
             Percentage of understanding questions:  ${resultDisassembled.toFixed(3)} Percentage of not understanding questions: ${resultNotDisassembled.toFixed(3)}`;
             updateCheckAfterHalfSeconds();
