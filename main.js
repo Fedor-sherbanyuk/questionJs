@@ -1,17 +1,18 @@
 const atomicInteger = createAtomicInteger();
-let count=2;
-let sumDisassembled = 0;
-let sumNotDisassembled = 0;
+const sumDisassembled = createAtomicInteger();
+const sumNotDisassembled = createAtomicInteger();
+const count = createAtomicInteger();
 
 function createAtomicInteger(initialValue = 0) {
     return {
         get get (){
             return initialValue;
         },
+        getPlusOne: () => initialValue++,
         increment: () => ++initialValue,
     };
 }
-
+count.increment();
 document.addEventListener('change', exampleJavaScriptQuestion);
 
 function exampleJavaScriptQuestion() {
@@ -70,11 +71,8 @@ function exampleJavaScriptQuestion() {
     console.log(list.length);
     const disassembled = document.getElementById("disassembled").checked;
     const noDisassembled = document.getElementById("noDisassembled").checked;
-    const resultDisassembled = sumDisassembled / list.length;
-    const resultNotDisassembled = sumNotDisassembled / list.length;
-    event.preventDefault();
-    console.log(sumDisassembled);
-    console.log(sumNotDisassembled);
+    const resultDisassembled = sumDisassembled.get / list.length;
+    const resultNotDisassembled = sumNotDisassembled.get / list.length;
     getCheck({disassembled, noDisassembled,
         resultDisassembled, resultNotDisassembled, list, atomicInteger});
 }
@@ -97,30 +95,27 @@ function updateCheckAfterHalfSeconds() {
 }
 
 function getCheck({disassembled, noDisassembled, resultDisassembled, resultNotDisassembled, list, atomicInteger}) {
-    switch (true) {
-        case (disassembled && noDisassembled && atomicInteger.get < list.length - 1):
-            document.querySelector('.card-header-title').innerHTML = `YOU HAVE TO CHOOSE ONE STATUS GAME OVER!\n
+    if(disassembled && noDisassembled && atomicInteger.get < list.length - 1){
+        document.querySelector('.card-header-title').innerHTML = `YOU HAVE TO CHOOSE ONE STATUS GAME OVER!\n
             Percentage of understanding questions:  ${resultDisassembled.toFixed(3)} Percentage of not understanding questions: ${resultNotDisassembled.toFixed(3)}`;
-            updateCheckAfterHalfSeconds();
-            reloadAfter4Seconds();
-            break;
-        case (disassembled && !noDisassembled && atomicInteger.get < list.length - 1):
-            document.querySelector('.card-header-title').innerHTML = `${list[atomicInteger.increment()]}`;
-            document.getElementById('questionNumber').innerHTML = `Question ${count++}`;
-            sumDisassembled++;
-            updateCheckAfterHalfSeconds();
-            break;
-        case (!disassembled && noDisassembled && atomicInteger.get < list.length - 1):
-            document.querySelector('.card-header-title').innerHTML = `Okay, here's another question ${list[atomicInteger.increment()]}`;
-            document.getElementById('questionNumber').innerHTML = `Question ${count++}`;
-            sumNotDisassembled++;
-            updateCheckAfterHalfSeconds();
-            break;
-        case (atomicInteger.get >= list.length - 1):
-            document.querySelector('.card-header-title').innerHTML = `GAME OVER\n
+        updateCheckAfterHalfSeconds();
+        reloadAfter4Seconds();
+    }
+    else if (disassembled && !noDisassembled && atomicInteger.get < list.length - 1) {
+        document.querySelector('.card-header-title').innerHTML = `${list[atomicInteger.increment()]}`;
+        document.getElementById('questionNumber').innerHTML = `Question ${count.increment()}`;
+        sumDisassembled.getPlusOne();
+        updateCheckAfterHalfSeconds();
+    } else if(!disassembled && noDisassembled && atomicInteger.get < list.length - 1){
+        document.querySelector('.card-header-title').innerHTML = `Okay, here's another question ${list[atomicInteger.increment()]}`;
+        document.getElementById('questionNumber').innerHTML = `Question ${count.increment()}`;
+        sumNotDisassembled.getPlusOne();
+        updateCheckAfterHalfSeconds();
+    }
+    else if(atomicInteger.get >= list.length - 1){
+        document.querySelector('.card-header-title').innerHTML = `GAME OVER\n
             Percentage of understanding questions:  ${resultDisassembled.toFixed(3)} Percentage of not understanding questions: ${resultNotDisassembled.toFixed(3)}`;
-            updateCheckAfterHalfSeconds();
-            reloadAfter4Seconds();
-            break;
+        updateCheckAfterHalfSeconds();
+        reloadAfter4Seconds();
     }
 }
